@@ -22,8 +22,17 @@ for line in open(os.path.join(os.path.dirname(__file__), 'periodic_table')):
     atoms_by_name[name]     = new_atom
 
 def by_number(number):
-    return copy.deepcopy(atoms_by_number[number])
+    if number in atoms_by_number:
+        return copy.deepcopy(atoms_by_number[number])
+    else:
+        return False
 def by_name(name):
-    return copy.deepcopy(atoms_by_name[name])
+    if name in atoms_by_name:
+        return copy.deepcopy(atoms_by_name[name])
+    else:
+        return False
 def by_symbol(symbol):
-    return copy.deepcopy(atoms_by_symbol[symbol])
+    if symbol in atoms_by_symbol:
+        return copy.deepcopy(atoms_by_symbol[symbol])
+    else:
+        return False

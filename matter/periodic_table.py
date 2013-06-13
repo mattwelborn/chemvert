@@ -2,6 +2,7 @@
 
 import atom
 import copy
+import os
 
 atoms = []
 #auxillary dictionaries for effecient access

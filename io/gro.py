@@ -45,8 +45,8 @@ def load(f, rename_atoms = {}, rename_mol={}):
         atm = gmx.GMXAtom(symbol, name, number, mass, r, gmxname, v)
         
         if not mol_prev or molnum_prev != molnum:
-            if molnum_prev != molnum:
-                geo.append( mol_prev)
+            if mol_prev and molnum_prev != molnum:
+                geo.append(mol_prev)
             symbol, name = rename_mol[molname] if molname in rename_mol else [None, None]
             mol = gmx.GMXMolecule([], symbol, name, molnum, molname)
         else:

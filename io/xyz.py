@@ -6,7 +6,7 @@ import common
 import numpy
 
 def load(f):
-    f = common.get_file_handle(f)
+    f, wasfile = common.get_file_handle(f)
     natoms = int(f.readline())
     comment = f.readline().rstrip()
     extras['comment'] = comment
@@ -23,7 +23,8 @@ def load(f):
         a.r = r
         geo += a
 
-    f.close()
+    if not wasfile:
+        f.close()
     return geo, extras
 
 def save(f, geo, extras = {}):

@@ -10,7 +10,7 @@ class GMXAtom(atom.Atom):
 
 class GMXMolecule(molecule.Molecule):
     def __init__(self, atoms, symbol, name, gmxnum, gmxsymbol):
-        molecule.Molecule.__init__(atoms, symbol, name)
+        molecule.Molecule.__init__(self, atoms, symbol, name)
         self.gmxnum = gmxnum
         self.gmxsymbol = gmxsymbol
 

@@ -32,7 +32,7 @@ def load(f):
 def save(f, geo, extras={}):
     f, washandle = common.get_file_write_handle(f)
 
-    print >> f, extras['opts']
+    print >> f, extras['options']
     print >> f
     print >> f
     for a in geo.get_atoms():

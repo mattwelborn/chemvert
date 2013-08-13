@@ -19,3 +19,9 @@ def get_file_write_handle(f):
         return f, True
     else: #XXX: more checks??
         return open(f,'w'), False
+
+def peek_line(f):
+    pos = f.tell()
+    line = f.readline()
+    f.seek(pos)
+    return line

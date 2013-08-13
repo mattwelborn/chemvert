@@ -6,9 +6,10 @@ import common
 import numpy
 
 def load(f):
-    f, wasfile = common.get_file_handle(f)
+    f, wasfile = common.get_file_read_handle(f)
     natoms = int(f.readline())
     comment = f.readline().rstrip()
+    extras = {}
     extras['comment'] = comment
 
     geo = geometry.Geometry([])
@@ -21,7 +22,7 @@ def load(f):
 
         r = numpy.array(map(float, s[1:4]))
         a.r = r
-        geo += a
+        geo.append(a)
 
     if not wasfile:
         f.close()
@@ -39,6 +40,6 @@ def save(f, geo, extras = {}):
     for i in allatoms:
         print >> f, i.symbol, i.r[0], i.r[1], i.r[2]
 
-    if not washangle:
+    if not washandle:
         f.close()
 

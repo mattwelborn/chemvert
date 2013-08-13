@@ -5,6 +5,7 @@ import copy
 class Geometry:
     def __init__(self, matter = [], box = []):
         self.matter = matter
+        self.box = box
     def append(self, other):
         if isinstance(other, Geometry):
             self.matter += other.matter

@@ -17,17 +17,16 @@ def load(f, rename_atoms = {}, rename_mol={}):
 
     geo = geometry.Geometry([])
 
-    wmsplit = re.compile(r'(\d+)(\w+)')
     molnum_prev, mol_prev = -1,None
     for i in range(natoms):
-        s = f.readline().split()
+        s = f.readline()
         
-        # s[0] contains the molecule number and name
-        m = wmsplit.search(s[0])
-        molnum  = m.group(1)
-        molname = m.group(2)
-        # s[1] is the atom gmxname
-        gmxname = s[1]
+        # l[0:5] contains the molecule number
+        molnum  = int(s[0:5])
+        # l[5:10] contains the molecule name
+        molname = s[5:10].strip()
+        # s[10:15] is the atom gmxname
+        gmxname = s[10:15].strip()
         if gmxname in rename_atoms:
             symbol = rename_atoms[gmxname]
         else:
@@ -38,10 +37,13 @@ def load(f, rename_atoms = {}, rename_mol={}):
         mass = a.mass if a else None
         
 
-        # s[3:6] are coordinates in nm
-        r = numpy.array(map(float, s[3:6])) * 10
-        # s[6:10] are velocities in nm/ps
-        v = numpy.array(map(float, s[6:10])) * 10
+        # s[20:44] are coordinates in nm
+        r = numpy.array(map(float, [s[20:28], s[28:36], s[36:44]])) * 10
+        # s[44:68] are velocities in nm/ps
+        if len(s)==68:
+            v = numpy.array(map(float, [s[44:52], s[52:60], s[60:68]])) * 10
+        else:
+            v = numpy.zeros(3)
         atm = gmx.GMXAtom(symbol, name, number, mass, r, gmxname, v)
         
         if not mol_prev or molnum_prev != molnum:

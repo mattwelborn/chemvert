@@ -1,11 +1,14 @@
 import common
-from ..matter import geometry
+from ..matter import geometry,periodic_table
+
+import os
+import numpy
 
 class QChemOptions:
-    def __init__(self, charge=0, spin=1, rem={'basis':'sto-3g', 'exchange':'hf'}):
+    def __init__(self, charge=0, spin=1):
         self.charge = charge
         self.spin   = spin
-        self.rem    = rem
+        self.rem    = {}
     def rem_str(self):
         ret = ""
         for key in self.rem:
@@ -13,8 +16,8 @@ class QChemOptions:
         return ret
             
 
-def load(f):
-    f, washandle = common.get_file_read_handle(f)
+def load(fl):
+    f, washandle = common.get_file_read_handle(fl)
 
     geo = geometry.Geometry()
     opts = QChemOptions()
@@ -62,8 +65,8 @@ def load(f):
     return geo, opts
 
 
-def save(f, geo, options, rename = {}, delete = []):
-    f, washandle = common.get_file_write_handle(f)
+def save(fl, geo, options, rename = {}, delete = []):
+    f, washandle = common.get_file_write_handle(fl)
 
     print >> f, "$molecule"
     print >> f, options.charge, options.spin

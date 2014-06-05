@@ -7,7 +7,7 @@ import re
 
 import numpy
 
-def load(f, rename_atoms = {}, rename_mol={}):
+def load(f, rename_atoms = {}, rename_mol={}, fixed=True):
     f, washandle = common.get_file_read_handle(f)
     extras = {}
     comment = f.readline().rstrip()
@@ -37,13 +37,20 @@ def load(f, rename_atoms = {}, rename_mol={}):
         mass = a.mass if a else None
         
 
-        # s[20:44] are coordinates in nm
-        r = numpy.array(map(float, [s[20:28], s[28:36], s[36:44]])) * 10
-        # s[44:68] are velocities in nm/ps
-        if len(s)==68:
-            v = numpy.array(map(float, [s[44:52], s[52:60], s[60:68]])) * 10
+        if fixed:
+            # s[20:44] are coordinates in nm
+            r = numpy.array(map(float, [s[20:28], s[28:36], s[36:44]])) * 10
+            if len(s)==68:
+                v = numpy.array(map(float, [s[44:52], s[52:60], s[60:68]])) * 10
+            else:
+                v = numpy.zeros(3)
         else:
-            v = numpy.zeros(3)
+            r = numpy.array(map(float, s.split()[3:6]))*10
+            if len(s.split()) >= 9:
+                v = numpy.array(map(float, s.split()[6:9]))*10
+            else:
+                v = numpy.zeros(3)
+        # s[44:68] are velocities in nm/ps
         atm = gmx.GMXAtom(symbol, name, number, mass, r, gmxname, v)
         
         if not mol_prev or molnum_prev != molnum:

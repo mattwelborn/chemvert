@@ -466,10 +466,16 @@ def load_output(fl,nowarn=False):
         stuff['cdftci'] = H
         return True
 
+    def read_no_static_mem(trigger_line):
+        if not "Unable to allocate requested memory in mega_alloc" in trigger_line:
+            return False
+        stuff['no_static_mem'] = True
+        return True
 
 
 
-    allparsers = [read_starfleet, read_final_energy, read_energy, read_standard, read_mulliken, read_cdftci, read_overlap, read_nuclear_repulsion, read_1e_ints, read_2e_ints, read_nbasis, read_nelectrons, read_n_cart_basis, read_rho_a, read_rho_b, read_fock_a, read_fock_b, read_multipole, read_MO_energies, read_chelpg, read_hirshfeld, read_npa, read_charge_spin, read_convergence_fail]
+
+    allparsers = [read_starfleet, read_final_energy, read_energy, read_standard, read_mulliken, read_cdftci, read_overlap, read_nuclear_repulsion, read_1e_ints, read_2e_ints, read_nbasis, read_nelectrons, read_n_cart_basis, read_rho_a, read_rho_b, read_fock_a, read_fock_b, read_multipole, read_MO_energies, read_chelpg, read_hirshfeld, read_npa, read_charge_spin, read_convergence_fail, read_no_static_mem]
     while True: #parsing loop
         line = f.readline()
         if not line or line.startswith('@@@'):

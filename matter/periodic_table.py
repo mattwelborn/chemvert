@@ -33,7 +33,7 @@ def by_name(name):
     else:
         return False
 def by_symbol(symbol):
-    if symbol in atoms_by_symbol:
+    if symbol.capitalize() in atoms_by_symbol:
         return copy.deepcopy(atoms_by_symbol[symbol])
     else:
         return False

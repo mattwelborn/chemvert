@@ -7,7 +7,10 @@ import numpy
 
 def load(f):
     f, wasfile = common.get_file_read_handle(f)
-    natoms = int(f.readline())
+    line = f.readline()
+    if not line:
+        return None,None
+    natoms = int(line)
     comment = f.readline().rstrip()
     extras = {}
     extras['comment'] = comment

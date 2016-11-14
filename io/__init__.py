@@ -5,3 +5,5 @@ import qchem
 import psi4
 import molden
 import cube
+import molpro
+import gaussian

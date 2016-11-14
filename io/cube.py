@@ -19,7 +19,7 @@ def load(f):
     extras['header'] = f.readline().rstrip()
     extras['kind'] = f.readline().rstrip()
     s = f.readline().split()
-    natoms = int(s[0])
+    natoms = abs(int(s[0]))
     origin = numpy.array(map(float,s[1:4])) * bohr_to_angstrom
     for i in range(3):
         s = f.readline().split()
@@ -37,6 +37,8 @@ def load(f):
         a.r = r
         geo.append(a)
 
+    if extras['kind'] == "Orbitals":
+        f.readline()
     data = numpy.zeros(npts[0]*npts[1]*npts[2])
     count = 0
     for line in f:

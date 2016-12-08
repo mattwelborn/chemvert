@@ -1,6 +1,7 @@
 import atom
 import molecule
 import copy
+import numpy
 
 class Geometry:
     def __init__(self, matter = None, box = None):
@@ -36,3 +37,15 @@ class Geometry:
 
     def get_molecules(self):
         return [i for i in self.matter if isinstance(i, molecule.Molecule)]
+
+    def get_r(self):
+        atoms = self.get_atoms()
+        r = numpy.zeros([len(atoms), 3])
+        for i,atom in enumerate(atoms):
+            r[i,:] = atom.r.copy()
+        return r
+
+    def set_r(self, r):
+        atoms = self.get_atoms()
+        for i,atom in enumerate(atoms):
+            atom.r = r[i,:].copy()

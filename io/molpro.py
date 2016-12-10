@@ -9,7 +9,7 @@ def load_output(fl,nowarn=False):
     stuff = {}
     stuff['done'] = False
     stuff['active_mos'] = None
-    stuff['enegies'] = []
+    stuff['energies'] = []
 
     def read_vmr(trigger_line):
         if not " Variable memory released" in trigger_line:
@@ -30,7 +30,7 @@ def load_output(fl,nowarn=False):
 
         s = line.split()
         e = float(s[-1])
-        energies.append({'kind': 'RKS', 'energy': e})
+        stuff['energies'].append({'kind': 'RKS', 'energy': e})
         
         return True
 
@@ -40,7 +40,7 @@ def load_output(fl,nowarn=False):
 
         s = line.split()
         e = float(s[-1])
-        energies.append({'kind': 'RHF', 'energy': e})
+        stuff['energies'].append({'kind': 'RHF', 'energy': e})
         
         return True
 

@@ -9,6 +9,7 @@ def load_output(fl,nowarn=False):
     stuff = {}
     stuff['done'] = False
     stuff['active_mos'] = None
+    stuff['enegies'] = []
 
     def read_vmr(trigger_line):
         if not " Variable memory released" in trigger_line:
@@ -23,10 +24,33 @@ def load_output(fl,nowarn=False):
 
         return True
 
+    def read_rks_energy(trigger_line):
+        if "!RKS STATE" not in trigger_line or "Energy" not in trigger_line:
+            return False
+
+        s = line.split()
+        e = float(s[-1])
+        energies.append({'kind': 'RKS', 'energy': e})
+        
+        return True
+
+    def read_rhf_energy(trigger_line):
+        if "!RHF STATE" not in trigger_line or "Energy" not in trigger_line:
+            return False
+
+        s = line.split()
+        e = float(s[-1])
+        energies.append({'kind': 'RHF', 'energy': e})
+        
+        return True
+
+
+    # TODO: MP2 and CC energies and stuff
 
 
 
-    allparsers = [read_vmr, read_active_mos]
+
+    allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy]
     while True: #parsing loop
         line = f.readline()
         if not line or line.startswith('@@@'):

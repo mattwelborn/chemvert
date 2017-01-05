@@ -110,6 +110,8 @@ def load_output(fl,nowarn=False):
     stuff['multipoles'] = {}
     stuff['MO_energies'] = []
     stuff['NPA'] = []
+    stuff['frequencies'] = []
+    stuff['zpe'] = []
 
     def read_starfleet(trigger_line):
         if not 'Thank you very much for using Q-Chem.  Have a nice day.' in trigger_line:
@@ -472,10 +474,32 @@ def load_output(fl,nowarn=False):
         stuff['no_static_mem'] = True
         return True
 
+    def read_freq(trigger_line):
+        if not "**                       VIBRATIONAL ANALYSIS                       **" in trigger_line:
+            return False
+
+        freqs = []
+        while True:
+            line = f.readline()
+            if "STANDARD THERMODYNAMIC QUANTITIES AT" in line:
+                break
+            if "Frequency:  " in line:
+                freqs += map(float, line.split()[1:4])
+        
+        stuff['frequencies'].append(freqs)
+        return True
+    
+    def read_zpe(trigger_line):
+        if not "Zero point vibrational energy" in trigger_line:
+            return False
+
+        stuff['zpe'].append(float(trigger_line.split()[-2]))
+        return True
 
 
 
-    allparsers = [read_starfleet, read_final_energy, read_energy, read_standard, read_mulliken, read_cdftci, read_overlap, read_nuclear_repulsion, read_1e_ints, read_2e_ints, read_nbasis, read_nelectrons, read_n_cart_basis, read_rho_a, read_rho_b, read_fock_a, read_fock_b, read_multipole, read_MO_energies, read_chelpg, read_hirshfeld, read_npa, read_charge_spin, read_convergence_fail, read_no_static_mem]
+
+    allparsers = [read_starfleet, read_final_energy, read_energy, read_standard, read_mulliken, read_cdftci, read_overlap, read_nuclear_repulsion, read_1e_ints, read_2e_ints, read_nbasis, read_nelectrons, read_n_cart_basis, read_rho_a, read_rho_b, read_fock_a, read_fock_b, read_multipole, read_MO_energies, read_chelpg, read_hirshfeld, read_npa, read_charge_spin, read_convergence_fail, read_no_static_mem, read_freq, read_zpe]
     while True: #parsing loop
         line = f.readline()
         if not line or line.startswith('@@@'):

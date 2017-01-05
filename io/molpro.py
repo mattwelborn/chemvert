@@ -21,6 +21,12 @@ def load_output(fl,nowarn=False):
         if "MOs in active region:" not in trigger_line:
             return False
         stuff['active_mos'] = trigger_line.split()[4:]
+        while True:
+            line = f.readline()
+            s = line.split()
+            if len(s) == 0:
+                break
+            stuff['active_mos'] += s
 
         return True
 
@@ -43,6 +49,7 @@ def load_output(fl,nowarn=False):
         stuff['energies'].append({'kind': 'RHF', 'energy': e})
         
         return True
+
 
 
     # TODO: MP2 and CC energies and stuff

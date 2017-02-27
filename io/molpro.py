@@ -10,6 +10,7 @@ def load_output(fl,nowarn=False):
     stuff['done'] = False
     stuff['active_mos'] = None
     stuff['energies'] = []
+    stuff['gaps'] = []
 
     def read_vmr(trigger_line):
         if not " Variable memory released" in trigger_line:
@@ -52,12 +53,52 @@ def load_output(fl,nowarn=False):
 
 
 
+    def read_gap(trigger_line):
+        if "LUMO-HOMO" not in trigger_line:
+            return False
+        
+        s = line.split()
+        gap = float(s[-1])
+        stuff['gaps'].append(gap)
+
+
     # TODO: MP2 and CC energies and stuff
+    def read_rmp2_energy(trigger_line):
+        if "!RMP2 STATE" not in trigger_line or "Energy" not in trigger_line:
+            return False
+
+        s = line.split()
+        e = float(s[-1])
+        stuff['energies'].append({'kind': 'RMP2', 'energy': e})
+        
+        return True
+
+    def read_ump2_energy(trigger_line):
+        if "!UMP2 STATE" not in trigger_line or "Energy" not in trigger_line:
+            return False
+
+        s = line.split()
+        e = float(s[-1])
+        stuff['energies'].append({'kind': 'UMP2', 'energy': e})
+        
+        return True
+
+    def read_lmp2_energy(trigger_line):
+        if "!LMP2 total energy" not in trigger_line:
+            return False
+
+        s = line.split()
+        e = float(s[-1])
+        stuff['energies'].append({'kind': 'LMP2', 'energy': e})
+        
+        return True
 
 
 
 
-    allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy]
+
+
+    allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy, read_lmp2_energy, read_rmp2_energy, read_ump2_energy, read_gap]
     while True: #parsing loop
         line = f.readline()
         if not line or line.startswith('@@@'):

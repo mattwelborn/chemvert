@@ -1,5 +1,6 @@
 import common
 from ..matter import geometry,periodic_table
+from .. import constants
 
 import os
 import numpy
@@ -58,7 +59,7 @@ def load_output(fl,nowarn=False):
             return False
         
         s = line.split()
-        gap = float(s[-1])
+        gap = float(s[-1].rstrip('eV')) *  constants.ev_to_hartree
         stuff['gaps'].append(gap)
 
 

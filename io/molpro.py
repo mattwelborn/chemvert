@@ -131,7 +131,7 @@ def load_output(fl,nowarn=False):
                 break
             sign = s[8]
             charge = float(s[9])
-            if sign == '+':
+            if sign == '-':
                 charge *= -1
             charges.append(charge)
         stuff['mulliken_pops'].append(numpy.array(charges))

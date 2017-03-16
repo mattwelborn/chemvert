@@ -12,6 +12,8 @@ def load_output(fl,nowarn=False):
     stuff['active_mos'] = None
     stuff['energies'] = []
     stuff['gaps'] = []
+    stuff['mulliken_pops'] = []
+    stuff['ibba_pops'] = []
 
     def read_vmr(trigger_line):
         if not " Variable memory released" in trigger_line:
@@ -94,12 +96,53 @@ def load_output(fl,nowarn=False):
         
         return True
 
+    def read_ibba(trigger_line):
+        if "Total charge composition:" not in trigger_line:
+            return False
+
+        f.readline()
+        if "CEN ATOM" not in f.readline():
+            return False
+
+        charges = []
+        while True:
+            line = f.readline()
+            s = line.split()
+            if not line or len(s)==0:
+                break
+            charge = float(s[-1])
+            charges.append(charge)
+        stuff['ibba_pops'].append(numpy.array(charges))
+        return True
+
+    def read_mulliken(trigger_line):
+        if "Population analysis by basis function type" not in trigger_line:
+            return False
+
+        f.readline()
+        if "Unique atom" not in f.readline():
+            return False
+
+        charges = []
+        while True:
+            line = f.readline()
+            s = line.split()
+            if not line or len(s) == 0: 
+                break
+            sign = s[8]
+            charge = float(s[9])
+            if sign == '+':
+                charge *= -1
+            charges.append(charge)
+        stuff['mulliken_pops'].append(numpy.array(charges))
+        return True
 
 
 
 
 
-    allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy, read_lmp2_energy, read_rmp2_energy, read_ump2_energy, read_gap]
+
+    allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy, read_lmp2_energy, read_rmp2_energy, read_ump2_energy, read_gap, read_mulliken, read_ibba]
     while True: #parsing loop
         line = f.readline()
         if not line or line.startswith('@@@'):

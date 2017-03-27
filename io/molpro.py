@@ -12,6 +12,9 @@ def load_output(fl,nowarn=False):
     stuff['active_mos'] = None
     stuff['energies'] = []
     stuff['gaps'] = []
+    stuff['HOMOs'] = []
+    stuff['LUMOs'] = []
+    stuff['orb_energies'] = []
 
     def read_vmr(trigger_line):
         if not " Variable memory released" in trigger_line:
@@ -54,15 +57,6 @@ def load_output(fl,nowarn=False):
 
 
 
-    def read_gap(trigger_line):
-        if "LUMO-HOMO" not in trigger_line:
-            return False
-        
-        s = line.split()
-        gap = float(s[-1].rstrip('eV')) *  constants.ev_to_hartree
-        stuff['gaps'].append(gap)
-
-
     # TODO: MP2 and CC energies and stuff
     def read_rmp2_energy(trigger_line):
         if "!RMP2 STATE" not in trigger_line or "Energy" not in trigger_line:
@@ -94,12 +88,53 @@ def load_output(fl,nowarn=False):
         
         return True
 
+    def read_orbital_energies(trigger_line):
+        if "ELECTRON ORBITALS" not in trigger_line:
+            return False
+
+        energies = []
+        while True:
+            line = f.readline()
+            if " HOMO " in line:
+                break
+
+            front = line[:31]
+            s = front.split()
+            if len(s) != 4:
+                continue
+            try:
+                en = float(s[2])
+                energies.append(en)
+            except(ValueError):
+                continue
+
+        stuff['orb_energies'].append(numpy.array(energies))
 
 
+        s = line.split()
+        energy = float(s[-1].rstrip('eV')) *  constants.ev_to_hartree
+        name = s[1]
+        number = int(name.split('.')[0])
+        homo = {'energy': energy, 'name': name, 'number': number}
+        stuff['HOMOs'].append(homo)
+
+        line = f.readline()
+        s = line.split()
+        energy = float(s[-1].rstrip('eV')) *  constants.ev_to_hartree
+        name = s[1]
+        number = int(name.split('.')[0])
+        lumo = {'energy': energy, 'name': name, 'number': number}
+        stuff['LUMOs'].append(lumo)
+
+        line = f.readline()
+        s = line.split()
+        gap = float(s[-1].rstrip('eV')) *  constants.ev_to_hartree
+        stuff['gaps'].append(gap)
+
+        return True
 
 
-
-    allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy, read_lmp2_energy, read_rmp2_energy, read_ump2_energy, read_gap]
+    allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy, read_lmp2_energy, read_rmp2_energy, read_ump2_energy, read_orbital_energies]
     while True: #parsing loop
         line = f.readline()
         if not line or line.startswith('@@@'):

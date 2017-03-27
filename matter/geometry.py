@@ -49,3 +49,16 @@ class Geometry:
         atoms = self.get_atoms()
         for i,atom in enumerate(atoms):
             atom.r = r[i,:].copy()
+
+    def get_centroid(self):
+        r = self.get_r()
+        centroid = r.mean(axis=0)
+        return centroid
+
+    def center(self):
+        r = self.get_r()
+        cent = self.get_centroid()
+        r -= cent
+        self.set_r(r)
+
+

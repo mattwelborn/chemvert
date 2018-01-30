@@ -143,7 +143,7 @@ def load_output(fl,nowarn=False):
         return True
 
     def read_energy(trigger_line):
-        if not 'Total energy in the final basis set' in trigger_line:
+        if not 'Total energy in the small basis set' in trigger_line:
             return False
         stuff['energies'].append(float(trigger_line.split()[-1]))
         return True

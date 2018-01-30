@@ -1,9 +1,6 @@
 import numpy
-<<<<<<< HEAD
-=======
 import chemvert
 import StringIO
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
 
 import common
 from .. import constants
@@ -22,14 +19,10 @@ def load_output(fl, nowarn=False):
     stuff['natorbs'] = []
     stuff['mulliken_pops'] = []
     stuff['ibba_pops'] = []
-<<<<<<< HEAD
-    stuff['T1s'] = []
-=======
     stuff['noconv'] = False
     stuff['nogeoconv'] = False
     stuff['scf_histories'] = []
     stuff['overlaps'] = []
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
 
     def read_vmr(trigger_line):
         if not " Variable memory released" in trigger_line:
@@ -37,15 +30,12 @@ def load_output(fl, nowarn=False):
         stuff['done'] = True
         return True
 
-<<<<<<< HEAD
-=======
     def read_mct(trigger_line):
         if not "Molpro calculation terminated" in trigger_line:
             return False
         stuff['done'] = True
         return True
 
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
     def read_active_mos(trigger_line):
         if "MOs in active region:" not in trigger_line:
             return False
@@ -133,7 +123,6 @@ def load_output(fl, nowarn=False):
         e = float(s[-1])
         stuff['energies'].append({'kind': 'RHF', 'energy': e})
 
-<<<<<<< HEAD
         return True
 
     def read_embed_popmat(trigger_line):
@@ -143,44 +132,6 @@ def load_output(fl, nowarn=False):
         f.readline()
         f.readline()
 
-        M = numpy.zeros((ncen,nlmo))
-        pos = 0
-        while True:
-            width = len(f.readline().split())
-            for i in range(ncen):
-                line = f.readline()
-                vals = numpy.array(map(float, line.split()[1:]))
-                M[i,pos:pos+width] = vals
-            pos += width
-            if pos == nlmo:
-                break
-        stuff['embed_popmat'] = M
-=======
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
-        return True
-
-    def read_embed_popmat(trigger_line):
-        if "BEGIN EMBEDDING POP MATRIX" not in trigger_line:
-            return False
-        ncen, nlmo = map(int, f.readline().split())
-        f.readline()
-        f.readline()
-
-<<<<<<< HEAD
-    # TODO: MP2 and CC energies and stuff
-    def read_ccsdt_energy(trigger_line):
-        if "!CCSD(T) total energy:" not in trigger_line:
-            return False
-
-        s = line.split()
-        e = float(s[-1])
-        stuff['energies'].append({'kind': 'CCSD(T)', 'energy': e})
-
-        return True
-
-    def read_reference_energy(trigger_line):
-        if "Reference energy: " not in trigger_line:
-=======
         M = numpy.zeros((ncen,nlmo))
         pos = 0
         while True:
@@ -199,32 +150,14 @@ def load_output(fl, nowarn=False):
     # TODO: MP2 and CC energies and stuff
     def read_ccsdt_energy(trigger_line):
         if "!CCSD(T) total energy" not in trigger_line:
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
             return False
 
         s = line.split()
         e = float(s[-1])
-<<<<<<< HEAD
-        stuff['energies'].append({'kind': 'Ref', 'energy': e})
-
-        return True
-
-    def read_ccsd_correlation_energy(trigger_line):
-        if "CCSD correlation energy" not in trigger_line:
-            return False
-
-        s = line.split()
-        e = float(s[-1])
-        stuff['energies'].append({'kind': 'CCSD corr', 'energy': e})
-
-        return True
-
-=======
         stuff['energies'].append({'kind': 'CCSD(T)', 'energy': e})
 
         return True
 
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
     def read_ccsd_energy(trigger_line):
         if "!CCSD total energy" not in trigger_line:
             return False
@@ -295,11 +228,8 @@ def load_output(fl, nowarn=False):
 
             if "Electronic charge" in line:
                 break
-<<<<<<< HEAD
-=======
             if "Orbital spaces for UNO-CAS" in line:
                 break
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
 
             front = line[:21]
             s = front.split()
@@ -322,60 +252,6 @@ def load_output(fl, nowarn=False):
                 continue
 
         stuff['natorbs'].append(natorbs)
-<<<<<<< HEAD
-        return True
-
-    def read_T1_diagnostic(trigger_line):
-        if "T1 diagnostic:" not in trigger_line:
-            return False
-
-        stuff['T1s'].append(float(trigger_line.split()[-1]))
-        return True
-
-    def read_orbital_energies(trigger_line):
-        if "ELECTRON ORBITALS" not in trigger_line:
-            return False
-
-        energies = []
-        while True:
-            line = f.readline()
-            if " HOMO " in line:
-                break
-
-            front = line[:31]
-            s = front.split()
-            if len(s) != 4:
-                continue
-            try:
-                en = float(s[2])
-                energies.append(en)
-            except(ValueError):
-                continue
-
-        stuff['orb_energies'].append(numpy.array(energies))
-        s = line.split()
-        energy = float(s[-1].rstrip('eV')) *  constants.ev_to_hartree
-        name = s[1]
-        number = int(name.split('.')[0])
-        homo = {'energy': energy, 'name': name, 'number': number}
-        stuff['HOMOs'].append(homo)
-
-        line = f.readline()
-        s = line.split()
-        energy = float(s[-1].rstrip('eV')) *  constants.ev_to_hartree
-        name = s[1]
-        number = int(name.split('.')[0])
-        lumo = {'energy': energy, 'name': name, 'number': number}
-        stuff['LUMOs'].append(lumo)
-
-        line = f.readline()
-        s = line.split()
-        gap = float(s[-1].rstrip('eV')) *  constants.ev_to_hartree
-        stuff['gaps'].append(gap)
-
-        return True
-=======
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
         return True
 
     def read_orbital_energies(trigger_line):
@@ -448,30 +324,6 @@ def load_output(fl, nowarn=False):
         stuff['ibba_pops'].append(numpy.array(charges))
 
 
-<<<<<<< HEAD
-        return True
-
-    def find_ibba_deloc(trigger_line):
-        if "Summary of localized orbital composition: " not in trigger_line:
-            return False
-
-        f.readline()
-        if "ORB.ENERGY" not in f.readline():
-            return False
-
-        delocs = []
-        while True:
-            line = f.readline()
-            s = line.split()
-            if not line or len(s)==0:
-                break
-            if len(s) > 11:
-                delocs.append(int(s[0]))
-
-        stuff['ibba_delocs'] = delocs
-        return True
-
-=======
         return True
 
     def find_ibba_deloc(trigger_line):
@@ -521,7 +373,6 @@ def load_output(fl, nowarn=False):
             return True
         else:
             return False
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
 
     def read_mulliken(trigger_line):
         if "Population analysis by basis function type" not in trigger_line:
@@ -558,9 +409,6 @@ def load_output(fl, nowarn=False):
         stuff['end_geo'] = [geo, extras]
         return True
 
-<<<<<<< HEAD
-    allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy, read_lmp2_energy, read_rmp2_energy, read_ump2_energy, read_orbital_energies, read_mulliken, read_ibba, find_ibba_deloc, read_embed_popmat, read_natorbs, read_ccsdt_energy, read_ccsd_energy, read_bccd_energy, read_dcsd_energy, read_T1_diagnostic, read_ccsd_correlation_energy, read_reference_energy]
-=======
     def read_trunc_AOs(trigger_line):
         if "MGW printing truncation AOs" not in trigger_line:
             return False
@@ -578,7 +426,6 @@ def load_output(fl, nowarn=False):
 
 
     allparsers = [read_vmr, read_active_mos, read_rks_energy, read_rhf_energy, read_lmp2_energy, read_rmp2_energy, read_ump2_energy, read_orbital_energies, read_mulliken, read_ibba, find_ibba_deloc, read_embed_popmat, read_natorbs, read_ccsdt_energy, read_ccsd_energy, read_bccd_energy, read_dcsd_energy, read_gap, read_mct, read_uks_energy, read_no_conv,read_no_geo_conv,read_end_geo,read_trunc_AOs, read_scf_history, read_overlap]
->>>>>>> 62d31a0b5e631372cbf3bd795d56fb943db1fe1c
     while True: #parsing loop
         line = f.readline()
         if not line or line.startswith('@@@'):
